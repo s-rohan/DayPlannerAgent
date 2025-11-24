@@ -1,0 +1,49 @@
+flowchart TD
+  %% Top-level flow agent
+  A[MultiAgent - get_flow_agent]
+  A --> B[ParallelAgent - date+task determination]
+  A --> C[Manager Agent]
+  A --> D[Summary Agent]
+
+  %% Parallel agent contents
+  B --> B1[User Task Agent]
+  B --> B2[Date Determination Agent]
+  B2 --> |uses| Tsearch[Tool - google_search]
+
+  %% Manager agent routes to calendar subagents
+  C --> E[Event Storing Agent]
+  C --> F[Calendar Assistant]
+
+  %% event_storing_agent internals (CalendarAgent)
+  E --> E1[Event Classifier]
+  E --> E2[StoreEvent Agent]
+  E --> E3[Event Aggregator]
+
+  %% calendar_assistant internals & tools
+  F --> ToolFetchDate[FunctionTool - fetch_date_events_wrapper]
+  F --> ToolFetchRecurring[FunctionTool - fetch_recurring_events_wrapper]
+
+  %% CalendarAgent wrappers -> DB helpers
+  ToolFetchDate --> DBfetchDate[setup_events_db.fetch_date_events]
+  ToolFetchRecurring --> DBfetchRec[setup_events_db.fetch_recurring_events]
+  E2 --> WrapperAdd[add_event_wrapper]
+  WrapperAdd --> DBaddFuture[setup_events_db.add_future_event]
+  WrapperAdd --> DBaddRecurring[setup_events_db.add_recurring_event]
+  DBaddFuture --> SQLITE[(SQLite - events_db.sqlite)]
+  DBaddRecurring --> SQLITE
+  DBfetchDate --> SQLITE
+  DBfetchRec --> SQLITE
+
+  %% Data flows / user
+  U[User Input] --> A
+  E1 --> |classification JSON| WrapperAdd
+  WrapperAdd --> |confirmation text| E3
+  DBaddFuture --> |row id / success| E2
+  DBaddRecurring --> |row id / success| E2
+  F --> |events JSON| C
+  C --> D
+
+  style SQLITE fill:#f9f,stroke:#333,stroke-width:1px
+  style A fill:#eef,stroke:#333,stroke-width:1px
+  style E fill:#efe,stroke:#333,stroke-width:1px
+  style F fill:#efe,stroke:#333,stroke-width:1px
