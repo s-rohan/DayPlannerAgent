@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.env
+.vscode/
+.devcontainer/
+.venv/
+*.log
+.pytest_cache
+*.sqlite
+__pycache__/*
