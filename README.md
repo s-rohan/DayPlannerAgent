@@ -13,4 +13,3 @@ The following diagram shows the high-level architecture and data flow from the t
 	</picture>
 </p>
 
-If your viewer does not render SVG, the PNG file will be used as a fallback. You can also open `docs/diagrams/architecture.mmd` in a Mermaid preview to edit or re-render the diagram locally.
