@@ -79,4 +79,4 @@ def configure_logging():
 # repeated imports won't duplicate handlers.
 configure_logging()
 
-print("✅ Logging configured (file:", LOG_FILE, ")")
+print("Logging configured (file:", LOG_FILE, ")")
